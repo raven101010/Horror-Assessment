@@ -3,36 +3,34 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-import bcrypt from "bcrypt";
-import path from "path";
-import { fileURLToPath } from "url";
+import bcrypt from 'bcrypt';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import User from "./models/User.js";
-import postRoutes from "./routes/Post.js";
-import recommendationRoutes from "./routes/recommendationRoutes.js";
+import User from './models/User.js';
+import postRoutes from './routes/Post.js';
+import recommendationRoutes from './routes/recommendationRoutes.js';
 import horrorTakesRoutes from './routes/horrorTakes.js';
 import contactRouter from './routes/contactRouter.js';
-import sendEmail from "./utils/sendEmail.js";
+import sendEmail from './utils/sendEmail.js';
 
 dotenv.config();
 const app = express();
-
-// Middleware
 app.use(express.json());
 
-// Setup for __dirname in ESM
+// Setup __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Serve frontend build (from Vite) — production-ready
-app.use(express.static(path.join(__dirname, "dist")));
+// ✅ Serve frontend static files from project root's dist folder
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
-// ✅ Update CORS for development only
+// ✅ CORS settings for development
 if (process.env.NODE_ENV !== 'production') {
   app.use(
     cors({
-      origin: ["http://localhost:5173"],
-      methods: ["GET", "POST", "PUT", "DELETE"],
+      origin: ['http://localhost:5173'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
       credentials: true,
     })
   );
@@ -40,20 +38,19 @@ if (process.env.NODE_ENV !== 'production') {
 
 // ✅ MongoDB Connection
 mongoose
-  .connect(process.env.HORROR_HUBDB, {
-  })
+  .connect(process.env.HORROR_HUBDB)
   .then(() => {
-    console.log("✅ Successfully connected to MongoDB");
+    console.log('✅ Successfully connected to MongoDB');
 
     // ✅ Register
-    app.post("/api/register", async (req, res) => {
+    app.post('/api/register', async (req, res) => {
       const { username, email, password } = req.body;
 
       const existingAccount = await User.findOne({ email });
       if (existingAccount) {
         return res
           .status(400)
-          .json({ error: "User already exists with this email." });
+          .json({ error: 'User already exists with this email.' });
       }
 
       const hashedPass = await bcrypt.hash(password, 15);
@@ -71,53 +68,53 @@ mongoose
 
         await sendEmail(
           email,
-          "Horror Hub Verification Code",
+          'Horror Hub Verification Code',
           `Your verification code is: ${verificationCode}`
         );
 
-        res.status(200).json({ message: "New Account Registered Successfully" });
+        res.status(200).json({ message: 'New Account Registered Successfully' });
       } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Account Registration failed" });
+        res.status(500).json({ error: 'Account Registration failed' });
       }
     });
 
     // ✅ Verify Account
-    app.post("/api/verify-code", async (req, res) => {
+    app.post('/api/verify-code', async (req, res) => {
       const { email, code } = req.body;
 
       try {
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ error: "User not found." });
+        if (!user) return res.status(400).json({ error: 'User not found.' });
 
         if (user.verificationCode !== code)
-          return res.status(400).json({ error: "Invalid verification code." });
+          return res.status(400).json({ error: 'Invalid verification code.' });
 
         user.isVerified = true;
         user.verificationCode = undefined;
         await user.save();
 
-        res.status(200).json({ message: "Account verified successfully!" });
+        res.status(200).json({ message: 'Account verified successfully!' });
       } catch (error) {
-        console.error("Verification error:", error);
-        res.status(500).json({ error: "Verification failed." });
+        console.error('Verification error:', error);
+        res.status(500).json({ error: 'Verification failed.' });
       }
     });
 
     // ✅ Login
-    app.post("/api/login", async (req, res) => {
+    app.post('/api/login', async (req, res) => {
       const { email, password } = req.body;
 
       try {
         const user = await User.findOne({ email });
-        if (!user) return res.status(400).json({ error: "User Not Found." });
+        if (!user) return res.status(400).json({ error: 'User Not Found.' });
 
         const isPasswordsMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordsMatch)
-          return res.status(400).json({ error: "Incorrect Password." });
+          return res.status(400).json({ error: 'Incorrect Password.' });
 
         res.status(200).json({
-          message: "Login successful",
+          message: 'Login successful',
           user: {
             _id: user._id,
             username: user.username,
@@ -126,40 +123,27 @@ mongoose
           },
         });
       } catch (error) {
-        console.error("Login error:", error);
-        res.status(500).json({ error: "Login Failed" });
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Login Failed' });
       }
     });
 
     // ✅ API Routes
-    app.use("/api/posts", postRoutes);
-    app.use("/api/recommendations", recommendationRoutes);
-    app.use("/api/horrortakes", horrorTakesRoutes);
-    app.use("/api/contact", contactRouter);
+    app.use('/api/posts', postRoutes);
+    app.use('/api/recommendations', recommendationRoutes);
+    app.use('/api/horrortakes', horrorTakesRoutes);
+    app.use('/api/contact', contactRouter);
+    app.use('/uploads', express.static('uploads'));
 
-    app.use("/uploads", express.static("uploads"));
-
-    // ✅ Fallback route for React (SPA routing)
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
+    // ✅ React SPA fallback (must be after all other routes)
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
     });
 
-    // ✅ Start the server
+    // ✅ Start server
     const port = process.env.PORT || 5000;
-
-    app._router.stack.forEach((middleware) => {
-  if (middleware.route) {
-    console.log("Route:", middleware.route.path);
-  } else if (middleware.name === "router") {
-    middleware.handle.stack.forEach((handler) => {
-      console.log("Sub-route:", handler.route?.path);
-    });
-  }
-});
-
-
     app.listen(port, () => {
       console.log(`🚀 Server running on port ${port}`);
     });
   })
-  .catch((err) => console.error("❌ Error connecting to MongoDB:", err));
+  .catch((err) => console.error('❌ Error connecting to MongoDB:', err));
