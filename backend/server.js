@@ -29,7 +29,9 @@ app.use(express.static(path.join(__dirname, '..', 'dist')));
 if (process.env.NODE_ENV !== 'production') {
   app.use(
     cors({
-      origin: ['http://localhost:5173'],
+      origin: ['http://localhost:5173',
+        "https://horror-assessment-1.onrender.com"
+      ],
       methods: ['GET', 'POST', 'PUT', 'DELETE'],
       credentials: true,
     })
