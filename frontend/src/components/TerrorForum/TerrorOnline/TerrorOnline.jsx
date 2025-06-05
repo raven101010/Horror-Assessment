@@ -23,7 +23,7 @@ const TerrorOnline = () => {
     "Slasher",
   ];
   useEffect(() => {
-  const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const baseUrl = import.meta.env.VITE_API_URL || "https://horror-assessment.onrender.com";
   const fetchPosts = async () => {
     const res = await fetch(`${baseUrl}/api/posts`);
     const data = await res.json();

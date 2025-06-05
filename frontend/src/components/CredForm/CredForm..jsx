@@ -83,7 +83,7 @@ const CredForm = () => {
     }
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const baseUrl = import.meta.env.VITE_API_URL || "https://horror-assessment.onrender.com";
       const url = isLogin ? "/api/login" : "/api/register";
 
       // Send login or register request
@@ -162,7 +162,7 @@ const CredForm = () => {
     }
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const baseUrl = import.meta.env.VITE_API_URL || "https://horror-assessment.onrender.com";
       // Send verification code to server
       const res = await fetch(`${baseUrl}/api/verify-code`, {
         method: "POST",
