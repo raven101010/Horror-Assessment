@@ -1,9 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'public/_redirects', // source file
+          dest: '.'                // copy to root of dist/
+        }
+      ]
+    })
+  ],
   build: {
     outDir: 'dist',
     rollupOptions: {
@@ -12,7 +23,4 @@ export default defineConfig({
       },
     },
   },
-  server: {
-    historyApiFallback: true, // this is mostly for dev
-  }
 })
