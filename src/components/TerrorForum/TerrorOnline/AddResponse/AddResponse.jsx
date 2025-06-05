@@ -29,6 +29,7 @@ const AddResponse = ({
 }) => {
   const [response, setResponse] = useState(initialResponse);
   const { user } = authStore();
+  const API_URL = import.meta.env.VITE_API_URL;
 
 
   useEffect(() => {
@@ -40,7 +41,7 @@ const AddResponse = ({
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/posts/${post._id}/respond`,
+        `${API_URL}/api/posts/${post._id}/respond`,
         {
           userId: user._id,
           response: response,

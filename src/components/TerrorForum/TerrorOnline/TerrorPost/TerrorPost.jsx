@@ -27,6 +27,7 @@ const TerrorPost = ({ post }) => {
   const [likedByUser, setLikedByUser] = useState(
     post.likes?.some((id) => id === user._id) || false
   );
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const isTruncated = post.content.length > 500;
   const previewContent = isTruncated
@@ -37,7 +38,7 @@ const TerrorPost = ({ post }) => {
     if (!quickResponse.trim()) return;
     try {
       const res = await fetch(
-        `http://localhost:5000/api/posts/${post._id}/respond`,
+        `${API_URL}/api/posts/${post._id}/respond`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -64,7 +65,7 @@ const TerrorPost = ({ post }) => {
   const toggleLike = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/posts/${post._id}/like`,
+        `${API_URL}/api/posts/${post._id}/like`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

@@ -38,6 +38,7 @@ const AddTerrorPost = ({ isOpen, onClose }) => {
   const [userPost, setUserPost] = useState("");
   const { user } = authStore();
   const [category, setCategory] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL;
 
 
   const handleSubmit = async () => {
@@ -61,7 +62,7 @@ const AddTerrorPost = ({ isOpen, onClose }) => {
 
 
       const res = await axios.post(
-        "http://localhost:5000/api/posts",
+        `${API_URL}/api/posts`,
         postPayload,
         {
           headers: {

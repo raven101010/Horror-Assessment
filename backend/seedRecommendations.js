@@ -47,8 +47,6 @@ const seedData = [...topHorrorPicks, ...cultClassics, ...horrorGames];
 
 mongoose
   .connect(process.env.HORROR_HUBDB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
   })
   .then(async () => {
     console.log("✅ MongoDB Connected");

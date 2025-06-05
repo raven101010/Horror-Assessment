@@ -51,11 +51,12 @@ const HorrorPicks = () => {
   const [cultClassics, setCultClassics] = useState([]);
   const [horrorGames, setHorrorGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/recommendations");
+        const res = await fetch(`${API_URL}/api/recommendations`);
         const data = await res.json();
         setTopHorrorPicks(data.filter((item) => item.category === "Top Horror Picks"));
         setCultClassics(data.filter((item) => item.category === "Cult Classics"));

@@ -23,6 +23,7 @@ const HorrorTakes = () => {
   const [newTake, setNewTake] = useState("");
   const toast = useToast();
   const WORD_LIMIT = 50;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [selectedTake, setSelectedTake] = useState(null);
   const {
@@ -33,7 +34,7 @@ const HorrorTakes = () => {
 
   const fetchTakes = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/horrortakes");
+      const response = await fetch(`${API_URL}/api/horrortakes`);
       const data = await response.json();
       setTakes(data);
     } catch (err) {
@@ -62,7 +63,7 @@ const HorrorTakes = () => {
     if (newTake.trim() === "") return;
 
     try {
-      const response = await fetch("http://localhost:5000/api/horrortakes", {
+      const response = await fetch(`${API_URL}/api/horrortakes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

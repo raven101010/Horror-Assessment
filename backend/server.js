@@ -14,36 +14,38 @@ import horrorTakesRoutes from './routes/horrorTakes.js';
 import contactRouter from './routes/contactRouter.js';
 import sendEmail from "./utils/sendEmail.js";
 
+dotenv.config();
 const app = express();
 
-dotenv.config();
+// Middleware
 app.use(express.json());
 
+// Setup for __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// ✅ Serve frontend build (from Vite) — production-ready
 app.use(express.static(path.join(__dirname, "dist")));
 
+// ✅ Update CORS for development only
+if (process.env.NODE_ENV !== 'production') {
+  app.use(
+    cors({
+      origin: ["http://localhost:5173"],
+      methods: ["GET", "POST", "PUT", "DELETE"],
+      credentials: true,
+    })
+  );
+}
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
-
-//MONGO DB CONNECTION
+// ✅ MongoDB Connection
 mongoose
   .connect(process.env.HORROR_HUBDB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
   })
   .then(() => {
     console.log("✅ Successfully connected to MongoDB");
 
-    // Register
+    // ✅ Register
     app.post("/api/register", async (req, res) => {
       const { username, email, password } = req.body;
 
@@ -55,7 +57,7 @@ mongoose
       }
 
       const hashedPass = await bcrypt.hash(password, 15);
-      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
 
       try {
         const newAccount = new User({
@@ -67,7 +69,11 @@ mongoose
         });
         await newAccount.save();
 
-        await sendEmail(email, "Horror Hub Verification Code", `Your verification code is: ${verificationCode}`);
+        await sendEmail(
+          email,
+          "Horror Hub Verification Code",
+          `Your verification code is: ${verificationCode}`
+        );
 
         res.status(200).json({ message: "New Account Registered Successfully" });
       } catch (error) {
@@ -76,7 +82,7 @@ mongoose
       }
     });
 
-    // Verify Account
+    // ✅ Verify Account
     app.post("/api/verify-code", async (req, res) => {
       const { email, code } = req.body;
 
@@ -98,7 +104,7 @@ mongoose
       }
     });
 
-    // Login
+    // ✅ Login
     app.post("/api/login", async (req, res) => {
       const { email, password } = req.body;
 
@@ -125,25 +131,35 @@ mongoose
       }
     });
 
-    // Posting on the Forum
+    // ✅ API Routes
     app.use("/api/posts", postRoutes);
-    // Movie Routes
     app.use("/api/recommendations", recommendationRoutes);
-    // Horror Takes Routes
-    app.use('/api/horrortakes', horrorTakesRoutes);
-    // Contact Form Routes
+    app.use("/api/horrortakes", horrorTakesRoutes);
     app.use("/api/contact", contactRouter);
-
 
     app.use("/uploads", express.static("uploads"));
 
-    // Start 
+    // ✅ Fallback route for React (SPA routing)
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "dist", "index.html"));
+    });
+
+    // ✅ Start the server
     const port = process.env.PORT || 5000;
+
+    app._router.stack.forEach((middleware) => {
+  if (middleware.route) {
+    console.log("Route:", middleware.route.path);
+  } else if (middleware.name === "router") {
+    middleware.handle.stack.forEach((handler) => {
+      console.log("Sub-route:", handler.route?.path);
+    });
+  }
+});
+
+
     app.listen(port, () => {
-      console.log(
-        `🚀 Server running on port ${port}`
-      );
+      console.log(`🚀 Server running on port ${port}`);
     });
   })
-  .catch((err) => console.error(" ❌ Error connecting to MongoDB:", err));
-
+  .catch((err) => console.error("❌ Error connecting to MongoDB:", err));
