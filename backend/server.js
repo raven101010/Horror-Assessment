@@ -26,7 +26,6 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // ✅ CORS settings for development
-if (process.env.NODE_ENV !== 'production') {
   app.use(
     cors({
       origin: ['http://localhost:5173',
@@ -36,7 +35,7 @@ if (process.env.NODE_ENV !== 'production') {
       credentials: true,
     })
   );
-}
+
 
 // ✅ MongoDB Connection
 mongoose
