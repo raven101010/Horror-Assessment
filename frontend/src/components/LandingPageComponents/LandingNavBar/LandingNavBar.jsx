@@ -22,21 +22,21 @@ const LandingNavBar = () => {
 
   const NavLinks = (
     <>
-      <Link href="#home">
+      <a href="#home">
         <Text fontWeight={400} color="#FFF" mb={{ base: 4, md: 0 }} mr={{ md: 5 }}>
           Home
         </Text>
-      </Link>
-      <Link href="#about">
+      </a>
+      <a href="#about">
         <Text fontWeight={400} color="#FFF" mb={{ base: 4, md: 0 }} mr={{ md: 5 }}>
           About
         </Text>
-      </Link>
-      <Link href="#contact">
+      </a>
+      <a href="#contact">
         <Text fontWeight={400} color="#FFF" mb={{ base: 4, md: 0 }}>
           Contact
         </Text>
-      </Link>
+      </a>
     </>
   );
 
