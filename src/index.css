@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "Poppins";
+  src: url("/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/PlayfairDisplay-VariableFont_wght.ttf");
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  font-family: "Poppins";
+}
+
+
