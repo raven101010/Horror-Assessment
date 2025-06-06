@@ -17,6 +17,7 @@ const AboutSection = () => {
         justify="center"
         gap={10}
         id="about"
+        scrollMarginTop="100px"
       >
         <Box
           flex="1"
