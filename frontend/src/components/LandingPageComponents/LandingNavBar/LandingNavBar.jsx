@@ -16,27 +16,29 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { Link as RouterLink } from "react-router-dom";
+import { Link as ScrollLink } from 'react-scroll';
+
 
 const LandingNavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const NavLinks = (
     <>
-      <a href="#home">
+      <ScrollLink to="home" smooth={true} duration={500} offset={-80}>
         <Text fontWeight={400} color="#FFF" mb={{ base: 4, md: 0 }} mr={{ md: 5 }}>
           Home
         </Text>
-      </a>
-      <a href="#about">
+      </ScrollLink>
+      <ScrollLink to="about" smooth={true} duration={500} offset={-80}>
         <Text fontWeight={400} color="#FFF" mb={{ base: 4, md: 0 }} mr={{ md: 5 }}>
           About
         </Text>
-      </a>
-      <a href="#contact">
+      </ScrollLink>
+      <ScrollLink to="contact" smooth={true} duration={500} offset={-80}>
         <Text fontWeight={400} color="#FFF" mb={{ base: 4, md: 0 }}>
           Contact
         </Text>
-      </a>
+      </ScrollLink>
     </>
   );
 
